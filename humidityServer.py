@@ -1,13 +1,18 @@
 import flask
 import sqlite3
 import datetime
+import json
 
 app = flask.Flask(__name__)
 
 @app.route('/')
-def hello_world():
+def home():
+    return flask.render_template('index.html')
+
+@app.route('/data')
+def data():
     con = sqlite3.connect('humidity.db')
-    response = '<br>'.join(['{}: {:.1f}C {:.1f}%'.format(datetime.datetime.fromtimestamp(epoch), t, h) for epoch, h, t in con.cursor().execute('SELECT * from humidity')])
+    response = json.dumps([row for row in con.cursor().execute('SELECT * from humidity')])
     con.close()
     return response
 
