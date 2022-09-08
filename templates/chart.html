@@ -1,0 +1,79 @@
+
+<!doctype html>
+<html>
+
+<head>
+    <title>Temperature Monitor</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.3/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.8.0/chart.js"></script>
+    
+</head>
+
+<body>
+    <main>
+        <div style="width:85%; margin: auto;">
+            <canvas id="canvas"></canvas>
+        </div>
+    </main>
+    <script>
+    async function updateChart(chart) {
+        const data = await (await fetch("/data")).json();
+        var time = [], temp = [], humid = [];
+        for (d of data) {
+            time.push(new Date(d[0] * 1000).toISOString())
+            temp.push(d[2])
+            humid.push(d[1])
+        }
+        // console.log([time, temp, humid])
+
+        var lineData = {
+            labels: time,
+            datasets: [{
+                label: "Temperature (C)",
+                borderColor: '#e28743',
+                backgroundColor: '#e28743',
+                fill: false,
+                data: temp,
+                yAxisID: "y",
+                cubicInterpolationMode: 'monotone',
+                tension: 1
+            },
+            {
+                label: "Humidity (%)",
+                borderColor: '#50a5ff',
+                backgroundColor: '#50a5ff',
+                fill: false,
+                data: humid,
+                yAxisID: "y",
+                cubicInterpolationMode: 'monotone',
+                tension: 1
+            }]
+        };
+
+        chart.data = lineData        
+        chart.update()
+    }
+
+    var ctx = document.getElementById("canvas").getContext("2d");
+    const chart = new Chart(ctx, {
+        type: 'line',
+        data: null,
+        options: {
+            responsive: true,
+            interaction: {
+                mode: 'index',
+                intersect: false,
+            }
+        }
+    });
+
+    window.onload = async function() {
+        while (true) {
+            updateChart(chart)
+            await new Promise(r => setTimeout(r, 60000));
+        }
+    }
+    </script>
+</body>
+
+</html>
