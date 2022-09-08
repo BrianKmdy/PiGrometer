@@ -16,12 +16,16 @@
         </div>
     </main>
     <script>
+    function c_to_f(celsius) {
+        return celsius * 1.8 + 32
+    }
+
     async function updateChart(chart) {
         const data = await (await fetch("/data")).json();
         var time = [], temp = [], humid = [];
         for (d of data) {
             time.push(new Date(d[0] * 1000).toISOString())
-            temp.push(d[2])
+            temp.push(c_to_f(d[2]))
             humid.push(d[1])
         }
         // console.log([time, temp, humid])
@@ -30,23 +34,25 @@
             labels: time,
             datasets: [{
                 label: "Temperature (C)",
-                borderColor: '#e28743',
-                backgroundColor: '#e28743',
-                fill: false,
-                data: temp,
-                yAxisID: "y",
-                cubicInterpolationMode: 'monotone',
-                tension: 1
-            },
-            {
-                label: "Humidity (%)",
+                yAxisID: 'humid',
                 borderColor: '#50a5ff',
                 backgroundColor: '#50a5ff',
                 fill: false,
-                data: humid,
-                yAxisID: "y",
+                data: temp,
                 cubicInterpolationMode: 'monotone',
-                tension: 1
+                tension: 1,
+                pointRadius: 2
+            },
+            {
+                label: "Humidity (%)",
+                yaAxisID: 'humid',
+                borderColor: '#34eba4',
+                backgroundColor: '#34eba4',
+                fill: false,
+                data: humid,
+                cubicInterpolationMode: 'monotone',
+                tension: 1,
+                pointRadius: 2
             }]
         };
 
@@ -63,6 +69,30 @@
             interaction: {
                 mode: 'index',
                 intersect: false,
+            },
+            stacked: false,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Apartment Temperature/Humidity'
+                }
+            },
+            scales: {
+                temp: {
+                    type: 'linear',
+                    display: true,
+                    position: 'left'
+                },
+                humid: {
+                    type: 'linear',
+                    display: true,
+                    position: 'right',
+                    grid: {
+                         // only want the grid lines for one axis to show up
+                        drawOnChartArea: false,
+                        drawBorder: false
+                    }
+                }
             }
         }
     });

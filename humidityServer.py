@@ -6,12 +6,12 @@ import time
 
 app = flask.Flask(__name__)
 
-granularity = 180
+granularity = 600
 history = 3 * 24 * 60 * 60
 
 @app.route('/')
 def home():
-    return flask.render_template('index.html')
+    return flask.render_template('chart.html')
 
 @app.route('/data')
 def data():
