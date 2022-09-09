@@ -1,0 +1,109 @@
+
+<!doctype html>
+<html>
+
+<head>
+    <title>Temperature Monitor</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.3/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.8.0/chart.js"></script>
+    
+</head>
+
+<body>
+    <main>
+        <div style="width:85%; margin: auto;">
+            <canvas id="canvas"></canvas>
+        </div>
+    </main>
+    <script>
+    function c_to_f(celsius) {
+        return celsius * 1.8 + 32
+    }
+
+    async function updateChart(chart) {
+        const data = await (await fetch("/data")).json();
+        var time = [], temp = [], humid = [];
+        for (d of data) {
+            time.push(new Date(d[0] * 1000).toISOString())
+            temp.push(c_to_f(d[2]))
+            humid.push(d[1])
+        }
+        // console.log([time, temp, humid])
+
+        var lineData = {
+            labels: time,
+            datasets: [{
+                label: "Temperature (C)",
+                yAxisID: 'humid',
+                borderColor: '#50a5ff',
+                backgroundColor: '#50a5ff',
+                fill: false,
+                data: temp,
+                cubicInterpolationMode: 'monotone',
+                tension: 1,
+                pointRadius: 2
+            },
+            {
+                label: "Humidity (%)",
+                yaAxisID: 'humid',
+                borderColor: '#34eba4',
+                backgroundColor: '#34eba4',
+                fill: false,
+                data: humid,
+                cubicInterpolationMode: 'monotone',
+                tension: 1,
+                pointRadius: 2
+            }]
+        };
+
+        chart.data = lineData        
+        chart.update()
+    }
+
+    var ctx = document.getElementById("canvas").getContext("2d");
+    const chart = new Chart(ctx, {
+        type: 'line',
+        data: null,
+        options: {
+            responsive: true,
+            interaction: {
+                mode: 'index',
+                intersect: false,
+            },
+            stacked: false,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Apartment Temperature/Humidity'
+                }
+            },
+            scales: {
+                temp: {
+                    type: 'linear',
+                    display: true,
+                    position: 'left'
+                },
+                humid: {
+                    type: 'linear',
+                    display: true,
+                    position: 'right',
+                    grid: {
+                         // only want the grid lines for one axis to show up
+                        drawOnChartArea: false,
+                        drawBorder: false
+                    }
+                }
+            }
+        }
+    });
+
+    window.onload = async function() {
+        while (true) {
+            updateChart(chart)
+            await new Promise(r => setTimeout(r, 60000));
+        }
+    }
+    </script>
+</body>
+
+</html>
