@@ -21,6 +21,7 @@ jobs:
         python-version: 3.9.2
     - name: Build wheel
       run: |
+        pip install wheel
         python setup.py bdist_wheel
     - name: Capture artifacts
       uses: actions/upload-artifact@v3
