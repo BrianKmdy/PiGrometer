@@ -1,3 +1,8 @@
-humidity.log
-humidity.db
+/.vscode
+/build
+/dist
+
+*.log
+*.db
 *.pyc
+*.egg-info
