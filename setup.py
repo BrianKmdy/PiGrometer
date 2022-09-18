@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import setuptools
 from distutils.core import setup
 
 setup(
@@ -9,4 +10,5 @@ setup(
     author='Brian Moody',
     url='https://github.com/BrianKmdy/TempMonitor',
     packages=['tempmonitor'],
+    setup_requires=['wheel']
 )
