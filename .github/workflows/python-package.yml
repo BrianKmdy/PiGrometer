@@ -5,7 +5,7 @@ name: Python package
 
 on:
   push:
-    branches: [ "main", "develop", "feature-github_ci" ]
+    branches: [ "main", "develop" ]
   pull_request:
     branches: [ "main", "develop" ]
 
@@ -19,11 +19,6 @@ jobs:
       uses: actions/setup-python@v3
       with:
         python-version: 3.9.2
-    - name: Check path
-      run: |
-        echo $(pwd)
-        echo $(ls)
-        echo $(ls ..)
     - name: Build wheel
       run: |
         pip3 install wheel
@@ -31,5 +26,5 @@ jobs:
     - name: Capture artifacts
       uses: actions/upload-artifact@v3
       with:
-        name: Wheel
+        name: Python Package
         path: dist/*.whl
