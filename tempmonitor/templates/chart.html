@@ -20,7 +20,7 @@
         return celsius * 1.8 + 32
     }
 
-    async function updateChart(chart) {
+    async function updateChart(chart, animate) {
         const data = await (await fetch("/data")).json();
         var time = [], temp = [], humid = [];
         for (d of data) {
@@ -40,8 +40,8 @@
                 fill: false,
                 data: temp,
                 cubicInterpolationMode: 'monotone',
-                tension: 1,
-                pointRadius: 2
+                tension: 0.2,
+                pointRadius: 0
             },
             {
                 label: "Humidity (%)",
@@ -51,13 +51,15 @@
                 fill: false,
                 data: humid,
                 cubicInterpolationMode: 'monotone',
-                tension: 1,
-                pointRadius: 2
+                tension: 0.2,
+                pointRadius: 0
             }]
         };
 
-        chart.data = lineData        
-        chart.update()
+        chart.data = lineData
+        
+
+        chart.update(animate ? '' : 'none')
     }
 
     var ctx = document.getElementById("canvas").getContext("2d");
@@ -98,9 +100,10 @@
     });
 
     window.onload = async function() {
+        updateChart(chart, true)
         while (true) {
-            updateChart(chart)
             await new Promise(r => setTimeout(r, 60000));
+            updateChart(chart, false)
         }
     }
     </script>
