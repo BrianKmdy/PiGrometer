@@ -18,7 +18,7 @@ def data():
     global granularity
     global history
 
-    con = sqlite3.connect('humidity.db')
+    con = sqlite3.connect(os.path.join(os.path.expanduser("~"), '.pigrometer', 'pigrometer.db'))
     response = json.dumps([row for row in con.cursor().execute('SELECT * from humidity WHERE epoch % ? = 0 AND epoch > ?', (granularity, time.time() - history))])
     con.close()
     return response
