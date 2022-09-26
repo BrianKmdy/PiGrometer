@@ -6,7 +6,7 @@ import time
 
 app = flask.Flask(__name__)
 
-granularity = 600
+granularity = 900
 history = 3 * 24 * 60 * 60
 
 @app.route('/')
