@@ -5,7 +5,7 @@ from distutils.core import setup
 
 setup(
     name='pigrometer',
-    version='0.1',
+    version='0.4',
     description='A webapp for monitoring temperature and humidity with a raspberry pi',
     author='Brian Moody',
     url='https://github.com/BrianKmdy/TempMonitor',
