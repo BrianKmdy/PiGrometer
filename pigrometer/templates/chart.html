@@ -21,7 +21,7 @@
     }
 
     async function updateChart(chart, animate) {
-        const data = await (await fetch("/data")).json();
+        const data = await (await fetch("/data?granularity={{granularity}}&history={{history}}")).json();
         var time = [], temp = [], humid = [];
         for (d of data) {
             time.push(new Date(d[0] * 1000).toISOString())
