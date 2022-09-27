@@ -24,7 +24,7 @@ def close_connection(exception):
 def home():
     return flask.render_template('chart.html',
         granularity=request.args.get('granularity', default=900, type=int),
-        history=request.args.get('history', default=(3 * 24 * 60 * 60), type=int))
+        history=request.args.get('history', default=3, type=int))
 
 @app.route('/data')
 def data():
@@ -32,7 +32,7 @@ def data():
     history = request.args.get('history', type=int)
 
     response = json.dumps([row for row in get_db().cursor().execute(
-        'SELECT * from humidity WHERE epoch % ? = 0 AND epoch > ?', (granularity, time.time() - history))])
+        'SELECT * from humidity WHERE epoch % ? = 0 AND epoch > ?', (granularity, time.time() - (history * 24 * 60 * 60)))])
     return response
 
 def run_server():
