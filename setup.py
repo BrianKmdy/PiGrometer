@@ -18,7 +18,7 @@ if GIT_REF is not None:
 
 setup(
     name='pigrometer',
-    version='no_version',
+    version=__version__,
     description='A webapp for monitoring temperature and humidity with a raspberry pi',
     author='Brian Moody',
     url='https://github.com/BrianKmdy/TempMonitor',
