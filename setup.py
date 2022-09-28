@@ -2,10 +2,11 @@
 
 import setuptools
 from distutils.core import setup
+import os
 
 setup(
     name='pigrometer',
-    version='0.4',
+    version=os.environ.get('PIGROMETER_VERSION', 'no_version'),
     description='A webapp for monitoring temperature and humidity with a raspberry pi',
     author='Brian Moody',
     url='https://github.com/BrianKmdy/TempMonitor',

@@ -5,16 +5,14 @@ name: Python Package
 
 on:
   push:
-    branches: [ "main", "develop" ]
+    branches: [ "*" ]
     tags: [ "*" ]
   pull_request:
-    branches: [ "main", "develop" ]
-
+    branches: [ "*" ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python
@@ -23,13 +21,15 @@ jobs:
         python-version: 3.9.2
     - name: Build wheel
       run: |
+        echo '${{ github.ref }}'
         pip3 install wheel
-        python3 setup.py bdist_wheel
+        export PIGROMETER_VERSION=$(git rev-parse --abbrev-ref HEAD)-$(git rev-parse HEAD | cut -c -7)
+        python3 setup.py bdist_egg
     - name: Capture artifacts
       uses: actions/upload-artifact@v3
       with:
         name: Python Package
-        path: dist/*.whl
+        path: dist/*.egg
 
   publish:
     needs: [build]
@@ -45,5 +45,5 @@ jobs:
       run: ls -R
     - uses: ncipollo/release-action@v1
       with:
-        artifacts: ./*.whl
+        artifacts: ./*.egg
         token: ${{ secrets.GITHUB_TOKEN }}
