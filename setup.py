@@ -4,10 +4,17 @@ import setuptools
 from distutils.core import setup
 import os
 
-GIT_REF = os.environ.get('PIGROMETER_VERSION')
-GIT_COMMIT = os.environ.get('PIGROMETER_VERSION')
-print(GIT_REF)
-print(GIT_COMMIT)
+__version__ = 'no_version'
+
+GIT_REF = os.environ.get('GIT_REF')
+GIT_COMMIT = os.environ.get('GIT_COMMIT')
+
+if GIT_REF is not None:
+    split_ref = GIT_REF.split('/')
+    if split_ref[1] == 'tags':
+        __version__ = split_ref[-1].split('v')[-1]
+    elif GIT_COMMIT is not None:
+        __version__ = f'{split_ref[-1]}-{GIT_COMMIT[:7]}'
 
 setup(
     name='pigrometer',

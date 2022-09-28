@@ -22,9 +22,7 @@ jobs:
     - name: Build egg
       run: |
         export GIT_REF='${{ github.ref }}'
-        echo $GIT_REF
         export GIT_COMMIT=$(git rev-parse HEAD)
-        echo $GIT_COMMIT
         python3 setup.py bdist_egg
     - name: Capture artifacts
       uses: actions/upload-artifact@v3
