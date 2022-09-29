@@ -9,6 +9,7 @@ readme = "README.md"
 python = "^3.9"
 Flask = "^2.2.2"
 adafruit-circuitpython-dht = "^3.7.7"
+"RPi.GPIO" = "^0.7.1"
 
 
 [build-system]
