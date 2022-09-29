@@ -21,14 +21,13 @@ jobs:
         python-version: 3.9.2
     - name: Build egg
       run: |
-        export GIT_REF='${{ github.ref }}'
-        export GIT_COMMIT=$(git rev-parse HEAD)
-        python3 setup.py bdist_egg
+        poetry version $(git describe --tags --abbrev=0 | cut -d v -f 2)
+        poetry build
     - name: Capture artifacts
       uses: actions/upload-artifact@v3
       with:
         name: Python Package
-        path: dist/*.egg
+        path: dist/*.whl
 
   publish:
     needs: [build]
@@ -44,5 +43,5 @@ jobs:
       run: ls -R
     - uses: ncipollo/release-action@v1
       with:
-        artifacts: ./*.egg
+        artifacts: ./*.whl
         token: ${{ secrets.GITHUB_TOKEN }}
