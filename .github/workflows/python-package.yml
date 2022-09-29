@@ -19,9 +19,9 @@ jobs:
       uses: actions/setup-python@v3
       with:
         python-version: 3.9.2
-    - name: Build egg
+    - name: Build wheel
       run: |
-        python3 install poetry
+        pip3 install poetry
         poetry version $(git describe --tags --abbrev=0 | cut -d v -f 2)
         poetry build
     - name: Capture artifacts
