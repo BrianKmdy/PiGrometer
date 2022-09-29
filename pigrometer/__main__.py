@@ -31,9 +31,9 @@ if __name__ == '__main__':
         help='Only run the temperature/humidity reader')
     parser.add_argument('--server-only', action='store_true',
         help='Only run the server')
-    parser.add_argument('--dht-version', type=int, default=Reader.DEFAULT_DHT_VERSION,
+    parser.add_argument('--dht-version', type=str, default=Reader.DEFAULT_DHT_VERSION,
         help='The version of the DHT sensor (either DHT 11 or DHT 22)')
-    parser.add_argument('--dht-pin', type=int, default=Reader.DEFAULT_DHT_PIN,
+    parser.add_argument('--dht-pin', type=str, default=Reader.DEFAULT_DHT_PIN,
         help='The GPIO on the raspberry pi that the DHT sensor is connected to')
     args = parser.parse_args()
 
