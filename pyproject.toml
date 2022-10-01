@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pigrometer"
-version = "0.0.0"
+version = "0.dev"
 description = "An app for capturing temperature/humidity readings on a raspberrry pi and displaying the information through a web interface"
 authors = ["Brian Moody <brian.k.moody@outlook.com>"]
 readme = "README.md"
