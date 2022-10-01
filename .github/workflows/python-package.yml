@@ -25,7 +25,9 @@ jobs:
         pip install poetry  
     - name: Build with poetry
       run: |
-        poetry version $(git describe --tags --abbrev=0 | cut -d v -f 2)
+        export VERSION=$(git tag --points-at HEAD)
+        if [ -z "$VERSION" ]; then export VERSION="$(git describe --tags --abbrev=0).dev"; fi
+        poetry version $VERSION
         poetry build
     - name: Capture artifacts
       uses: actions/upload-artifact@v3
