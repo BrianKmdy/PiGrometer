@@ -5,47 +5,46 @@ name: Python Package
 
 on:
   push:
-    branches: [ "*" ]
-    tags: [ "*" ]
+    branches: ['*']
+    tags: ['*']
   pull_request:
-    branches: [ "*" ]
+    branches: ['*']
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    - name: Set up Python
-      uses: actions/setup-python@v3
-      with:
-        python-version: 3.9.2
-    - name: Install depedencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install poetry  
-    - name: Build with poetry
-      run: |
-        poetry version $(git tag --points-at HEAD)
-        poetry build
+    - uses: ./.github/actions/poetry-build
     - name: Capture artifacts
       uses: actions/upload-artifact@v3
       with:
         name: Python Package
         path: dist/*.whl
 
-  publish:
+  publish-github:
     needs: [build]
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/v')
     permissions:
       contents: write
     steps:
-    - uses: actions/download-artifact@v3
-      with:
-        name: Python Package
-    - name: Display structure of downloaded files
-      run: ls -R
+    - uses: actions/checkout@v3
+    - uses: ./.github/actions/poetry-build
     - uses: ncipollo/release-action@v1
       with:
-        artifacts: ./*.whl
-        token: ${{ secrets.GITHUB_TOKEN }}
+        artifacts: dist/*.whl
+        token: ${{secrets.GITHUB_TOKEN}}
+
+  publish-pypi:
+    needs: [build, publish-github]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+    - uses: actions/checkout@v3
+    - uses: ./.github/actions/poetry-build
+    - name: Publish to pypi
+      run: |
+        poetry config repositories.pypi https://upload.pypi.org/legacy/
+        poetry config pypi-token.pypi ${{secrets.PYPI_API_KEY}}
+        poetry publish -r pypi
