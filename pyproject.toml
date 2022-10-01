@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "pigrometer"
+version = "0.dev"
+description = "An app for capturing temperature/humidity readings on a raspberrry pi and displaying the information through a web interface"
+authors = ["Brian Moody <brian.k.moody@outlook.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+Flask = "^2.2.2"
+adafruit-circuitpython-dht = "^3.7.7"
+"RPi.GPIO" = "^0.7.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
