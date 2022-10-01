@@ -21,6 +21,8 @@ jobs:
       with:
         name: Python Package
         path: dist/*.whl
+    - name: Install wheel
+      run: pip install dist/*.whl
 
   publish-github:
     needs: [build]
