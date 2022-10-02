@@ -54,6 +54,9 @@ class Reader(threading.Thread):
             try:
                 # Store the reading from the current period
                 temperature, humidity = self._get_dht_reading(dhtDevice)
+                if temperature is None or humidity is None:
+                    raise RuntimeError()
+
                 print('At {}: temp {:.1f}C humidity {:.1f}%'.format(datetime.datetime.fromtimestamp(self.current_start_of_period).strftime('%m-%d %H:%M:%S'), temperature, humidity))
                 cur.execute('INSERT INTO humidity VALUES (?, ?, ?)', (self.current_start_of_period, humidity, temperature))
                 con.commit()
