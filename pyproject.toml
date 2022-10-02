@@ -3,6 +3,7 @@ name = "pigrometer"
 version = "0.dev"
 description = "An app for capturing temperature/humidity readings on a raspberrry pi and displaying the information through a web interface"
 authors = ["Brian Moody <brian.k.moody@outlook.com>"]
+repository = "https://github.com/BrianKmdy/PiGrometer"
 readme = "README.md"
 
 [tool.poetry.dependencies]

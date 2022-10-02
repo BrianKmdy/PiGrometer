@@ -8,13 +8,13 @@ import threading
 import traceback
 
 class Reader(threading.Thread):
-    DATABASE = os.path.join(os.path.expanduser("~"), '.pigrometer', 'pigrometer.db')
+    DB_PATH = os.path.join(os.path.expanduser("~"), '.pigrometer', 'pigrometer.db')
     DEFAULT_PERIOD = 60
 
     # Default pin setup for the DHT22 sensort on the raspberry pi
     DEFAULT_DHT_VERSION = 'DHT22'
     DEFAULT_DHT_PIN = 'D4'
-    DHT_READ_RETRIES = 10
+    DHT_READ_RETRIES = 3
 
     def __init__(self, period, dht_version, dht_pin):
         super().__init__()
@@ -34,13 +34,15 @@ class Reader(threading.Thread):
             try:
                 return dhtDevice.temperature, dhtDevice.humidity
             except RuntimeError:
-                traceback.print_exc()
-                time.sleep(0.1)
+                time.sleep(1)
         raise RuntimeError
 
     def run(self):
+        if not os.path.exists(os.path.dirname(Reader.DB_PATH)):
+            os.makedirs(os.path.dirname(Reader.DB_PATH), exist_ok=True)
+
         # Connect to the db and create the table if it doesn't exist
-        con = sqlite3.connect(Reader.DATABASE)
+        con = sqlite3.connect(Reader.DB_PATH)
         cur = con.cursor()
         cur.execute('CREATE TABLE IF NOT EXISTS humidity (epoch bigint NOT NULL UNIQUE, temperature real, humidity real)')
 
@@ -51,6 +53,9 @@ class Reader(threading.Thread):
             try:
                 # Store the reading from the current period
                 temperature, humidity = self._get_dht_reading(dhtDevice)
+                if temperature is None or humidity is None:
+                    raise RuntimeError()
+
                 print('At {}: temp {:.1f}C humidity {:.1f}%'.format(datetime.datetime.fromtimestamp(self.current_start_of_period).strftime('%m-%d %H:%M:%S'), temperature, humidity))
                 cur.execute('INSERT INTO humidity VALUES (?, ?, ?)', (self.current_start_of_period, humidity, temperature))
                 con.commit()

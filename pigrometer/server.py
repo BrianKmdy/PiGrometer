@@ -11,7 +11,7 @@ app = flask.Flask(__name__)
 def get_db():
     db = getattr(flask.g, '_database', None)
     if db is None:
-        db = flask.g._database = sqlite3.connect(Reader.DATABASE)
+        db = flask.g._database = sqlite3.connect(Reader.DB_PATH)
     return db
 
 @app.teardown_appcontext
