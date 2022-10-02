@@ -14,7 +14,7 @@ class Reader(threading.Thread):
     # Default pin setup for the DHT22 sensort on the raspberry pi
     DEFAULT_DHT_VERSION = 'DHT22'
     DEFAULT_DHT_PIN = 'D4'
-    DHT_READ_RETRIES = 10
+    DHT_READ_RETRIES = 3
 
     def __init__(self, period, dht_version, dht_pin):
         super().__init__()
@@ -34,8 +34,7 @@ class Reader(threading.Thread):
             try:
                 return dhtDevice.temperature, dhtDevice.humidity
             except RuntimeError:
-                traceback.print_exc()
-                time.sleep(0.1)
+                time.sleep(1)
         raise RuntimeError
 
     def run(self):
