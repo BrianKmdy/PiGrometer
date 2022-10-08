@@ -13,9 +13,14 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.7', '3.8', '3.9', '3.10']
     steps:
     - uses: actions/checkout@v3
     - uses: ./.github/actions/poetry-build
+      with:
+        python-version: ${{matrix.python-version}}
     - name: Capture artifacts
       uses: actions/upload-artifact@v3
       with:
