@@ -1,13 +1,11 @@
 from pigrometer.reader import Reader
 from pigrometer.server import *
 import argparse
-import threading
-import time
 
 def run():
     reader = Reader(args.period, args.dht_version, args.dht_pin)
     reader.start()
-    run_server()
+    run_server(args.port)
     reader.terminate.set()
     reader.join()
 
@@ -21,10 +19,12 @@ def run_reader_only():
         reader.join()
 
 def run_server_only():
-    run_server()
+    run_server(args.port)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Raspberry pi temperature and humidity reader')
+    parser.add_argument('--port', type=int, default=5000,
+        help='The port for the web server')
     parser.add_argument('-p', '--period', type=int, default=Reader.DEFAULT_PERIOD,
         help='The length of a period (seconds), this is the length of time between readings')
     parser.add_argument('--reader-only', action='store_true',

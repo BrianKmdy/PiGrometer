@@ -5,10 +5,10 @@ import time
 import datetime
 import os
 import threading
-import traceback
+
+from pigrometer import DB_PATH
 
 class Reader(threading.Thread):
-    DB_PATH = os.path.join(os.path.expanduser("~"), '.pigrometer', 'pigrometer.db')
     DEFAULT_PERIOD = 60
 
     # Default pin setup for the DHT22 sensort on the raspberry pi
@@ -45,13 +45,13 @@ class Reader(threading.Thread):
 
     def _open_db_connection(self):
         # Connect to the db and create the table if it doesn't exist
-        db_connection = sqlite3.connect(Reader.DB_PATH)
+        db_connection = sqlite3.connect(DB_PATH)
         db_cursor = db_connection.cursor()
         return db_connection, db_cursor
 
     def run(self):
-        if not os.path.exists(os.path.dirname(Reader.DB_PATH)):
-            os.makedirs(os.path.dirname(Reader.DB_PATH), exist_ok=True)
+        if not os.path.exists(os.path.dirname(DB_PATH)):
+            os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
 
         db_connection, db_cursor = self._open_db_connection()
         db_cursor.execute('CREATE TABLE IF NOT EXISTS humidity (epoch bigint NOT NULL UNIQUE, temperature real, humidity real)')
