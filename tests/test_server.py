@@ -1,6 +1,5 @@
 from pigrometer import server
 import pytest
-import requests
 
 # TODO/bmoody Add the rest  of the assertions for these tests
 
