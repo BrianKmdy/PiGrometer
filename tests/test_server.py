@@ -1,4 +1,3 @@
-from pyparsing import trace_parse_action
 from pigrometer import server
 import pytest
 import requests
@@ -9,7 +8,9 @@ import requests
 # def app():
 #     client = server.app.test_client()
 # 
-def test_index_route():
+def test_index_route(mocker):
+    mocker.patch('pigrometer.DB_PATH', '/tmp/pigrometer.db')
+
     response = server.app.test_client().get('/')
 
     assert(response.status_code == 200)

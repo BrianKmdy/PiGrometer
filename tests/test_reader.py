@@ -5,6 +5,8 @@ import random
 
 @pytest.fixture
 def _reader(mocker):
+    mocker.patch('pigrometer.DB_PATH', '/tmp/pigrometer.db')
+
     sys.modules['sqlite3'] = mocker.MagicMock()
     sys.modules['adafruit_dht'] = mocker.MagicMock()
     sys.modules['board'] = mocker.MagicMock()

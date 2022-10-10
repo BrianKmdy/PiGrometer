@@ -1,8 +1,6 @@
 from pigrometer.reader import Reader
 from pigrometer.server import *
 import argparse
-import threading
-import time
 
 def run():
     reader = Reader(args.period, args.dht_version, args.dht_pin)

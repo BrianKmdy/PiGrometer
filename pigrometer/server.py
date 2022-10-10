@@ -1,17 +1,17 @@
-from pigrometer.reader import Reader
 import flask
 import sqlite3
 import json
 import time
-import os
 from flask import request
+
+from pigrometer import DB_PATH
 
 app = flask.Flask(__name__)
 
 def get_db():
     db = getattr(flask.g, '_database', None)
     if db is None:
-        db = flask.g._database = sqlite3.connect(Reader.DB_PATH)
+        db = flask.g._database = sqlite3.connect(DB_PATH)
     return db
 
 @app.teardown_appcontext
