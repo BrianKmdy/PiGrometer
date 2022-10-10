@@ -2,7 +2,6 @@ import pytest
 import sys
 import time
 import random
-import re
 
 @pytest.fixture
 def _reader(mocker):
@@ -34,8 +33,10 @@ def test_reader(mocker, _reader):
 
     _reader.start()
     time.sleep(1)
+    assert(_reader.is_alive() == True)
     _reader.terminate.set()
-    _reader.join()
+    _reader.join(1)
+    assert(_reader.is_alive() == False)
 
     assert(len(mock_db_cursor.mock_calls) > 0)
     assert(mock_temperature.called)
@@ -44,13 +45,15 @@ def test_reader(mocker, _reader):
         and len(mock_db_cursor.mock_calls) - 1 == mock_humidity.call_count)
 
 def test_reader_rand(mocker, _reader):
-    mock_get_dht_reading = mocker.MagicMock(side_effect=lambda d: (random.rantfloat(-1000, 1000), random.randfloat(-1000, 1000)))
-    mocker.patch.object(_reader, '_get_dht_reading',mock_get_dht_reading)
+    mock_get_dht_reading = mocker.MagicMock(side_effect=lambda d: (random.uniform(-1000, 1000), random.uniform(-1000, 1000)))
+    mocker.patch.object(_reader, '_get_dht_reading', mock_get_dht_reading)
 
     _reader.start()
     time.sleep(1)
+    assert(_reader.is_alive() == True)
     _reader.terminate.set()
-    _reader.join()
+    _reader.join(1)
+    assert(_reader.is_alive() == False)
 
     assert(mock_get_dht_reading.called)
 

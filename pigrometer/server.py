@@ -35,8 +35,8 @@ def data():
         'SELECT * from humidity WHERE epoch % ? = 0 AND epoch > ?', (granularity, time.time() - (history * 24 * 60 * 60)))])
     return response
 
-def run_server():
-    app.run(host='0.0.0.0')
+def run_server(port):
+    app.run(host='0.0.0.0', port=port)
 
 if __name__ == '__main__':
-    run_server()
+    run_server(5000)
