@@ -20,4 +20,4 @@ runs:
       shell: bash
       run: |
         poetry version $(git tag --points-at HEAD)
-        poetry build
+        poetry install
