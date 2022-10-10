@@ -25,7 +25,6 @@ class Reader(threading.Thread):
             raise Exception('Period must be greater than or equal to 1')
         self.dht_version = dht_version
         self.dht_pin = dht_pin
-        self.dht_device = None
     
     def _get_start_of_period(self):
         return int(time.time() / self.period) * self.period
