@@ -11,7 +11,7 @@ on:
     branches: ['*']
 
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -21,6 +21,10 @@ jobs:
     - uses: ./.github/actions/poetry-build
       with:
         python-version: ${{matrix.python-version}}
+    - name: Pytest
+      run: |
+        poetry install
+        poetry run pytest tests -s
     - name: Capture artifacts
       uses: actions/upload-artifact@v3
       with:
@@ -30,7 +34,7 @@ jobs:
       run: pip install dist/*.whl
 
   publish-github:
-    needs: [build]
+    needs: [build-and-test]
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/v')
     permissions:
@@ -44,7 +48,7 @@ jobs:
         token: ${{secrets.GITHUB_TOKEN}}
 
   publish-pypi:
-    needs: [build, publish-github]
+    needs: [publish-github]
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/v')
     steps:

@@ -27,45 +27,55 @@ class Reader(threading.Thread):
         self.dht_pin = dht_pin
     
     def _get_start_of_period(self):
-        return int(time.time() / 60) * 60
+        return int(time.time() / self.period) * self.period
 
-    def _get_dht_reading(self, dhtDevice):
+    def _get_time_to_next_period(self):
+        return (self.current_start_of_period + self.period) - time.time()
+
+    def _get_dht_device(self):
+        return getattr(adafruit_dht, self.dht_version)(getattr(board, self.dht_pin))
+
+    def _get_dht_reading(self, dht_device):
         for i in range(0, Reader.DHT_READ_RETRIES):
             try:
-                return dhtDevice.temperature, dhtDevice.humidity
+                return dht_device.temperature, dht_device.humidity
             except RuntimeError:
                 time.sleep(1)
         raise RuntimeError
+
+    def _open_db_connection(self):
+        # Connect to the db and create the table if it doesn't exist
+        db_connection = sqlite3.connect(Reader.DB_PATH)
+        db_cursor = db_connection.cursor()
+        return db_connection, db_cursor
 
     def run(self):
         if not os.path.exists(os.path.dirname(Reader.DB_PATH)):
             os.makedirs(os.path.dirname(Reader.DB_PATH), exist_ok=True)
 
-        # Connect to the db and create the table if it doesn't exist
-        con = sqlite3.connect(Reader.DB_PATH)
-        cur = con.cursor()
-        cur.execute('CREATE TABLE IF NOT EXISTS humidity (epoch bigint NOT NULL UNIQUE, temperature real, humidity real)')
+        db_connection, db_cursor = self._open_db_connection()
+        db_cursor.execute('CREATE TABLE IF NOT EXISTS humidity (epoch bigint NOT NULL UNIQUE, temperature real, humidity real)')
 
-        dhtDevice = getattr(adafruit_dht, self.dht_version)(getattr(board, self.dht_pin))
+        dht_device = self._get_dht_device()
 
         self.current_start_of_period = self._get_start_of_period()
         while not self.terminate.is_set():
             try:
                 # Store the reading from the current period
-                temperature, humidity = self._get_dht_reading(dhtDevice)
+                temperature, humidity = self._get_dht_reading(dht_device)
                 if temperature is None or humidity is None:
                     raise RuntimeError()
 
                 print('At {}: temp {:.1f}C humidity {:.1f}%'.format(datetime.datetime.fromtimestamp(self.current_start_of_period).strftime('%m-%d %H:%M:%S'), temperature, humidity))
-                cur.execute('INSERT INTO humidity VALUES (?, ?, ?)', (self.current_start_of_period, humidity, temperature))
-                con.commit()
+                db_cursor.execute('INSERT INTO humidity VALUES (?, ?, ?)', (self.current_start_of_period, humidity, temperature))
+                db_connection.commit()
             except RuntimeError:
                 print('Unable to get a reading from the DHT sensor')
             except sqlite3.IntegrityError:
                 pass
 
             # Sleep until the start of the next period
+            self.terminate.wait(self._get_time_to_next_period())
             self.current_start_of_period += self.period
-            self.terminate.wait(self.current_start_of_period - time.time())
 
-        con.close()
+        db_connection.close()
