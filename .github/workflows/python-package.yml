@@ -26,6 +26,7 @@ jobs:
         poetry run pytest tests -s
 
   build:
+    needs: [test]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -41,7 +42,7 @@ jobs:
       run: pip install dist/*.whl
 
   publish-github:
-    needs: [build-and-test]
+    needs: [build]
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/v')
     permissions:
