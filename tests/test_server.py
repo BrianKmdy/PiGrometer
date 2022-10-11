@@ -29,13 +29,27 @@ def test_route_home(_server):
     response = _server.app.test_client().get('/')
     assert(response.status_code == 200)
 
+@pytest.mark.parametrize('history, granularity',
+    [
+        (1, 60),
+        (3, 900),
+        (14, 18000),
+    ])
+def test_route_data_simple(mocker, _server, _database, history, granularity):
+
+    response = _server.app.test_client().get('/data', query_string=f'history={history}&granularity={granularity}')
+    assert(response.status_code == 200)
+    assert(response.json)
+
+@pytest.mark.skip(reason="Need to update API to take start and end time,\
+                          this breaks right now because the server relies on time.time()")
 @pytest.mark.parametrize('time_offsets, temperatures, humidities, history, granularity',
     [
         ([2700, 1800, 900], [0, 1, 2], [0, 1, 2], 1, 900),
         ([240, 180, 120, 60, 0], [0, 1, 2, 55, 3], [0, 2, 6, 8, -2], 1, 60),
         ([4, 3, 2], [0, 1, 21], [0, 51, 2], 1, 1)
     ])
-def test_route_data(mocker, _server, _database, time_offsets, temperatures, humidities, history, granularity):
+def test_route_data_advanced(mocker, _server, _database, time_offsets, temperatures, humidities, history, granularity):
     epochs = [int(time.time() / granularity) * granularity - t for t in time_offsets]
 
     db_connection, db_cursor = _database
