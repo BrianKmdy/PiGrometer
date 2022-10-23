@@ -34,10 +34,9 @@ def home():
 def data():
     granularity = request.args.get('granularity', default=DEFAULT_GRANULARITY, type=int)
     history = request.args.get('history', default=DEFAULT_HISTORY, type=int)
-
-    response = json.dumps([row for row in get_db().cursor().execute(
+    
+    return flask.jsonify([row for row in get_db().cursor().execute(
         'SELECT * from humidity WHERE epoch % ? = 0 AND epoch > ?', (granularity, time.time() - (history * 24 * 60 * 60)))])
-    return flask.jsonify(response)
 
 def run_server(port):
     app.run(host='0.0.0.0', port=port)

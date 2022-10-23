@@ -39,7 +39,7 @@ def test_route_data_simple(mocker, _server, _database, history, granularity):
 
     response = _server.app.test_client().get('/data', query_string=f'history={history}&granularity={granularity}')
     assert(response.status_code == 200)
-    assert(response.json)
+    assert(len(response.json) == 0)
 
 @pytest.mark.skip(reason="Need to update API to take start and end time,\
                           this breaks right now because the server relies on time.time()")
