@@ -8,6 +8,7 @@ import threading
 
 from pigrometer import DB_PATH
 
+
 class Reader(threading.Thread):
     DEFAULT_PERIOD = 60
 
@@ -25,7 +26,7 @@ class Reader(threading.Thread):
             raise Exception('Period must be greater than or equal to 1')
         self.dht_version = dht_version
         self.dht_pin = dht_pin
-    
+
     def _get_start_of_period(self):
         return int(time.time() / self.period) * self.period
 
@@ -54,7 +55,8 @@ class Reader(threading.Thread):
             os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
 
         db_connection, db_cursor = self._open_db_connection()
-        db_cursor.execute('CREATE TABLE IF NOT EXISTS humidity (epoch bigint NOT NULL UNIQUE, temperature real, humidity real)')
+        db_cursor.execute(
+            'CREATE TABLE IF NOT EXISTS humidity (epoch bigint NOT NULL UNIQUE, temperature real, humidity real)')
 
         dht_device = self._get_dht_device()
 
@@ -66,8 +68,10 @@ class Reader(threading.Thread):
                 if temperature is None or humidity is None:
                     raise RuntimeError()
 
-                print('At {}: temp {:.1f}C humidity {:.1f}%'.format(datetime.datetime.fromtimestamp(self.current_start_of_period).strftime('%m-%d %H:%M:%S'), temperature, humidity))
-                db_cursor.execute('INSERT INTO humidity VALUES (?, ?, ?)', (self.current_start_of_period, humidity, temperature))
+                print('At {}: temp {:.1f}C humidity {:.1f}%'.format(datetime.datetime.fromtimestamp(
+                    self.current_start_of_period).strftime('%m-%d %H:%M:%S'), temperature, humidity))
+                db_cursor.execute('INSERT INTO humidity VALUES (?, ?, ?)',
+                                  (self.current_start_of_period, humidity, temperature))
                 db_connection.commit()
             except RuntimeError:
                 print('Unable to get a reading from the DHT sensor')
