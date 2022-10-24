@@ -1,12 +1,16 @@
 name: Build with poetry
+inputs:
+  python-version:
+    required: false
+    default: 3.9
 
 runs:
   using: "composite"
   steps:
     - name: Set up Python
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v4
       with:
-        python-version: 3.9.2
+        python-version: ${{inputs.python-version}}
     - name: Install depedencies
       shell: bash
       run: |
@@ -16,4 +20,4 @@ runs:
       shell: bash
       run: |
         poetry version $(git tag --points-at HEAD)
-        poetry build
+        poetry install
