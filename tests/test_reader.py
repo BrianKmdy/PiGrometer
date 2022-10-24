@@ -42,10 +42,10 @@ def test_reader(mocker, _reader):
 
     _reader.start()
     time.sleep(1)
-    assert (_reader.is_alive() == True)
+    assert (_reader.is_alive() is True)
     _reader.terminate.set()
     _reader.join(1)
-    assert (_reader.is_alive() == False)
+    assert (_reader.is_alive() is False)
 
     assert (len(mock_db_cursor.mock_calls) > 0)
     assert (mock_temperature.called)
@@ -66,6 +66,6 @@ def test_reader_exception(mocker, _reader):
 
     _reader.start()
     time.sleep(1)
-    assert (_reader.is_alive() == False)
+    assert (_reader.is_alive() is False)
     _reader.terminate.set()
     _reader.join()
