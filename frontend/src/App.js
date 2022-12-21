@@ -1,3 +1,4 @@
+import API from './config.js';
 import logo from './logo.svg';
 import React, {useEffect} from 'react';
 import axios from 'axios';
@@ -5,7 +6,7 @@ import './App.css';
 
 function App() {
   useEffect(()=>{
-    axios.get('http://192.168.0.144:5000/data')
+    axios.get(`http://${API}:5000/data`)
     .then(({data})=>{
       console.log(data)
     })
