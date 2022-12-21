@@ -2,10 +2,12 @@ import flask
 import sqlite3
 import time
 from flask import request
+from flask_cors import CORS
 
 from pigrometer import DB_PATH
 
 app = flask.Flask(__name__)
+CORS(app)
 
 # TODO/bmoody Move these into a default config file/structure
 DEFAULT_GRANULARITY = 900
