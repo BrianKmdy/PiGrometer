@@ -11,6 +11,7 @@ python = "^3.7"
 Flask = "^2.2.2"
 adafruit-circuitpython-dht = "^3.7.7"
 "RPi.GPIO" = "^0.7.1"
+Flask-Cors = "^3.0.10"
 
 
 [tool.poetry.group.dev.dependencies]
