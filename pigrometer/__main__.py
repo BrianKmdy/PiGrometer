@@ -2,30 +2,7 @@ from pigrometer.reader import Reader
 from pigrometer.server import run_server
 import argparse
 
-
-def run():
-    reader = Reader(args.period, args.dht_version, args.dht_pin)
-    reader.start()
-    run_server(args.port)
-    reader.terminate.set()
-    reader.join()
-
-
-def run_reader_only():
-    reader = Reader(args.period, args.dht_version, args.dht_pin)
-    reader.start()
-    try:
-        reader.join()
-    except KeyboardInterrupt:
-        reader.terminate.set()
-        reader.join()
-
-
-def run_server_only():
-    run_server(args.port)
-
-
-if __name__ == '__main__':
+def main():
     parser = argparse.ArgumentParser(
         description='Raspberry pi temperature and humidity reader')
     parser.add_argument('--port', type=int, default=5000,
@@ -42,9 +19,22 @@ if __name__ == '__main__':
                         help='The GPIO on the raspberry pi that the DHT sensor is connected to')
     args = parser.parse_args()
 
-    if args.reader_only:
-        run_reader_only()
-    elif args.server_only:
-        run_server_only()
+    if not args.server_only:
+        reader = Reader(args.period, args.dht_version, args.dht_pin)
+        reader.start()
+        if args.reader_only:
+            try:
+                reader.join()
+            except KeyboardInterrupt:
+                reader.terminate.set()
+                reader.join()
+        else:
+            run_server(args.port)
+            reader.terminate.set()
+            reader.join()
     else:
-        run()
+        run_server(args.port)
+
+
+if __name__ == '__main__':
+    main()
