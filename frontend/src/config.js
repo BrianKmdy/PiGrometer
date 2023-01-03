@@ -1,1 +1,0 @@
-module.exports = {API: '192.168.0.144'}
