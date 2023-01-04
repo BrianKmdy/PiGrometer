@@ -5,7 +5,7 @@ const transform = (dataSet) => {
         let date = new Date(data[0] * 1000)
         let newDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
         let time = newDate.toISOString()
-        newData.time = time.slice(11, 16)
+        newData.time = Number(time.slice(11, 13) + '.' + time.slice(14, 16))
         newData.humidity = data[1];
         newData.temperature = data[2];
         result.push(newData);
