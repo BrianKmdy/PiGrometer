@@ -21,6 +21,7 @@ function App() {
   if (!firstLoad) {
     return (
       <div className="App">
+        <div>Testing</div>
         <Chart rawData={rawData}/>
       </div>
     );
