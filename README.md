@@ -22,6 +22,7 @@ To change the amount of data shown on the chart add params to the url `?granular
 - More readable timestamps at the bottom of the chart
 - Better logging
 - More features in the web ui, ability to easily set time range and granularity
+- Display and compare outside temperature and humidity
 - Ability to download data .csv with data from the web ui
 
 #### Feel free to create an issue if you run into any problems, or if there's any features you think would be a nice addition. Contributions are welcome as well.
