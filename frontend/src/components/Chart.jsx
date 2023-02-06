@@ -1,18 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import {
-    LineChart,
-    Line,
-    XAxis,
-    YAxis,
-    CartesianGrid,
-    Tooltip,
-    Legend
-  } from "recharts";
+import {LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
 import { transform } from '../helpers/transform.js'
+import moment from 'moment'
 
 const Chart = ({rawData}) => {
   const data = transform(rawData)
   console.log(data)
+
+  const ticksArr =  (dataSet) => {
+    let result = []
+    let tick = dataSet[0].raw
+    while (tick <= dataSet[dataSet.length - 1].raw) {
+      tick += 3600
+      result.push(tick)
+    }
+    return result
+  }
+
   return (
     <LineChart
       width={800}
@@ -26,7 +30,13 @@ const Chart = ({rawData}) => {
       }}
     >
       <CartesianGrid strokeDasharray="3 3"/>
-      <XAxis dataKey="time" />
+      <XAxis 
+        dataKey="raw"
+        type="number"
+        domain={['dataMin', 'dataMax']}
+        tickFormatter={(tick)=>moment(tick * 1000).format('HH:mm')}
+        ticks={ticksArr(data)}
+      />
       <YAxis yAxisId="left"/>
       <YAxis yAxisId="right" orientation="right" />
       <Tooltip />
