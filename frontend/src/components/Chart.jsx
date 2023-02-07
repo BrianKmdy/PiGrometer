@@ -1,20 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import {LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
 import { transform } from '../helpers/transform.js'
+import { ticksArr } from '../helpers/timeTicks.js'
 import moment from 'moment'
 
 const Chart = ({rawData}) => {
   const data = transform(rawData)
   console.log(data)
 
-  const ticksArr =  (dataSet) => {
-    let result = []
-    let tick = dataSet[0].raw
-    while (tick <= dataSet[dataSet.length - 1].raw) {
-      tick += 3600
-      result.push(tick)
+  const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="custom-tooltip">
+          <p className="label">{`${moment(label * 1000).format('ll')}`}</p>
+          <p className="label">{`${moment(label * 1000).format('LT')}`}</p>
+          <p className="label">{`temperature : ${payload[0].value} °C`}</p>
+          <p className="label">{`humidity : ${payload[1].value} %`}</p>
+        </div>
+      );
     }
-    return result
   }
 
   return (
@@ -34,12 +38,12 @@ const Chart = ({rawData}) => {
         dataKey="raw"
         type="number"
         domain={['dataMin', 'dataMax']}
-        tickFormatter={(tick)=>moment(tick * 1000).format('HH:mm')}
+        tickFormatter={(tick) => moment(tick * 1000).format('LT')}
         ticks={ticksArr(data)}
       />
       <YAxis yAxisId="left"/>
       <YAxis yAxisId="right" orientation="right" />
-      <Tooltip />
+      <Tooltip content={<CustomTooltip />}/>
       <Legend />
       <Line 
         yAxisId="left"
@@ -50,6 +54,7 @@ const Chart = ({rawData}) => {
       />
       <Line 
         yAxisId="left"
+        dot = {true}
         type="monotone"
         dataKey="humidity"
         stroke="#243763"
